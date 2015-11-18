@@ -1,0 +1,14 @@
+{%load staticfiles%}
+
+<html>
+    <head>
+        <title>Test</title>
+    </head>
+    <body>
+        <ol>
+            {% for dvd in dvd_list %}
+            <li>{{ dvd.title }}</li>
+            {% endfor %}
+        </ol>
+    </body>
+</html>
