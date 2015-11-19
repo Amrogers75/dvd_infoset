@@ -60,6 +60,12 @@
         <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
       </div>
     </div>
+    
+    <script id="nav-list-template" type="text/x-handlebars-template">
+        {{#each letters}}
+          <li><a class="letter" id="{{this}}" href="#">{{ this }}</a></li>
+        {{/each}}
+    </script>
 
     <div class="container" id="dvd-list">
         <!-- DVD Place Holder -->
@@ -67,9 +73,13 @@
 
       <hr>
 
+    <div id="pagination">
+    </div>
+
       <footer>
         <p>&copy; AMR75 2015</p>
       </footer>
+
     </div> <!-- /container -->        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
@@ -85,6 +95,24 @@
         <script src="js/vendor/bootstrap.min.js"></script>
         <script src="js/handlebars.js"></script>
         <script src="js/main.js"></script>
+
+        <script id="pagination-template" type="text/x-handlebars-template">
+            {{#if dvds}}
+                <span class="step-links">
+                    {{#if previous_page}}
+                        <a id='{{previous_page}}' class="page-button" href='#'>previous</a>
+                    {{/if}}
+
+                        <span class="current">
+                            Page {{ current_page }} of {{ all_pages }}.
+                        </span>
+
+                    {{#if next_page}}
+                        <a id='{{next_page}}' class="page-button" href="#">next</a>
+                    {{/if}}
+                </span>
+            {{/if }}
+        </script>
 
         <script id="dvd-list-template" type="text/x-handlebars-template">
           {{#each dvd_list}}
@@ -105,7 +133,7 @@
         <script id="dvd-detail-template" type="text/x-handlebars-template">
             <div class="row" id="{{ pk }}">
               <div class="col-md-12" id="{{ pk }}">
-                <h2 class="movie" id="{{ pk }}" >{{ title }}</h2>
+                <h2 class="dvd" id="{{ pk }}" >{{ title }}</h2>
                    <ul>
                       <li>{{ rating }}</li>
                       <li>{{ studio }}</li>
@@ -128,13 +156,27 @@
                 // compiled template
                 var template = Handlebars.compile(rawTemplate);
 
+                var navListRawTemplate = $('#nav-list-template').html();
+                var template2 = Handlebars.compile(navListRawTemplate);
+
+                var paginationRawTemplate = $('#pagination-template').html();
+                var template3 = Handlebars.compile(paginationRawTemplate);
+
+                var page_letter = 'A'
+
                 $.ajax({
                     type:'GET',
                     url:'http://127.0.0.1:8000/dvd_list/',
                     data:{},
                     success: function(data) {
-                        html_template = template(data)
-                        DvdList.html(html_template)
+                        html_template = template(data);
+                        dvdList.html(html_template);
+
+                        nav_template = template2(data);
+                        navList.html(nav_template);
+
+                        pagination_template = template3(data);
+                        pagination.html(pagination_template);
                     }
                 })
             });
@@ -153,6 +195,30 @@
                         DvdList.html(html_template)
                     }
                 })
+
+                $('#nav-list').on('click', '.letter', function(e) {
+
+                    console.log(e.target.id);
+                    page_letter = e.target.id
+
+                    $.ajax({
+                        type:'GET',
+                        url:'http://127.0.0.1:8000/dvd_list/',
+                        data:{'page': e.target.id},
+                        success: function(data) {
+
+                            list_template = template1(data);
+                            dvdList.html(list_template);
+
+                            nav_template = template2(data);
+                            navList.html(nav_template);
+
+                            pagination_template = template3(data);
+                            pagination.html(pagination_template);
+
+                        }
+                    })
+                });
             });
         </script>
     </body>

@@ -24,7 +24,8 @@ urlpatterns = [
     url(r'^dvd_list/$', 'main.views.dvd_list'),
     url(r'^dvd_detail/(?P<pk>/d+)/$', 'main.views.dvd_detail'),
 
-    # url(r'^dvddetail/(?P<pk>/d+)/$', 'main.views.dvddetail'),
+    url(r'^dvd_list_dbv/$', 'main.views.dvd_list_dbv'),
+    # url(r'^dvd_list_cbv/$', 'main.views.dvd_list_cbv'),
 
     url(r'^dvd_list_temp/$', 'main.views.dvd_list'),
     url(r'^dvd_list_mysql/$', 'main.views.dvd_list_mysql'),

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html>  
+<head>  
+    <title>Title</title>
+</head>  
+    <body>
+        <ol>
+            {% for dvd in dvd_list %}
+                <li>{{ dvd.dvd_title }} ||| {{ dvd.price }}</li>
+            {% endfor %}
+        </ol>
+
+        {% if dvd_list and dvd_list.paginator.num_pages > 1 %}
+                <span class="step-links">
+                    {% if dvd_list.has_previous %}
+                        <a href= "?page={{ dvd_list.previous_page_number }}">previous</a>
+                    {% endif %}
+
+                        <span class="current">
+                            Page {{ dvd_list.number }} of {{ dvd_list.paginator.num_pages }}.
+                        </span>
+
+                    {% if dvd_list.has_next %}
+                        <a href="?page={{ dvd_list.next_page_number }}">next</a>
+                    {% endif %}
+                </span>
+        {% endif %}
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+    </body>
+</html>
