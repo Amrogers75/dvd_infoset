@@ -60,14 +60,8 @@
         <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
       </div>
     </div>
-    
-    <script id="nav-list-template" type="text/x-handlebars-template">
-        {{#each letters}}
-          <li><a class="letter" id="{{this}}" href="#">{{ this }}</a></li>
-        {{/each}}
-    </script>
 
-    <div class="container" id="dvd-list">
+    <div id="dvd-list_dbv">
         <!-- DVD Place Holder -->
     </div>
 
@@ -82,19 +76,22 @@
 
     </div> <!-- /container -->        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+        
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-        <script>
-            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-            e.src='//www.google-analytics.com/analytics.js';
-            // r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-            ga('create','UA-XXXXX-X','auto');ga('send','pageview');
-        </script>
-
+        
         <script src="js/vendor/bootstrap.min.js"></script>
         <script src="js/handlebars.js"></script>
         <script src="js/main.js"></script>
+
+        <script>
+            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+            e.src='//www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+            ga('create','UA-XXXXX-X','auto');ga('send','pageview');
+        </script>
+
 
         <script id="pagination-template" type="text/x-handlebars-template">
             {{#if dvds}}
@@ -114,6 +111,12 @@
             {{/if }}
         </script>
 
+        <script id="nav-list-template" type="text/x-handlebars-template">
+            {{#each letters}}
+              <li><a class="letter" id="{{this}}" href="#">{{ this }}</a></li>
+            {{/each}}
+        </script>
+
         <script id="dvd-list-template" type="text/x-handlebars-template">
           {{#each dvd_list}}
           <div class="row">
@@ -130,26 +133,16 @@
           {{/each}}
         </script>
 
-        <script id="dvd-detail-template" type="text/x-handlebars-template">
-            <div class="row" id="{{ pk }}">
-              <div class="col-md-12" id="{{ pk }}">
-                <h2 class="dvd" id="{{ pk }}" >{{ title }}</h2>
-                   <ul>
-                      <li>{{ rating }}</li>
-                      <li>{{ studio }}</li>
-                      <li>{{ genre }}</li>
-                   </ul>
-                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-              </div>
-            </div>
-        </script>
-
         <script type='text/javascript'>
-            var DvdList = $('#dvd-list');
-
             $(function() {
-                console.log('something');
-                // insertion point
+            var DvdList = $('#dvd-list_dbv');
+            var pagination = $('#pagination')
+            var navList = $('#nav-list');
+            var page_letter = 'A';
+
+            
+            // console.log('something');
+            // insertion point
                 
                 // the template
                 var rawTemplate = $('#dvd-list-template').html();
@@ -166,7 +159,7 @@
 
                 $.ajax({
                     type:'GET',
-                    url:'http://127.0.0.1:8000/dvd_list/',
+                    url:'http://127.0.0.1:8000/dvd_list_dbv/',
                     data:{},
                     success: function(data) {
                         html_template = template(data);
@@ -181,20 +174,30 @@
                 })
             });
 
-            $('dvd-list').on('click', 'dvd', function(e) {
-                console.log('stuff');
-                var rawTemplate = $('#dvd-detail-template').html();
-                var template = Handlebars.compile(rawTemplate);
+            $('#pagination').on('click', '.page-button', function(e) {
 
-                $.ajax({
-                    type:'GET',
-                    url:'http://127.0.0.1:8000/dvd_detail/' + e.target.id,
-                    data:{},
-                    success: function(data) {
-                        html_template = template(data)
-                        DvdList.html(html_template)
-                    }
-                })
+                    console.log(e.target.id);
+
+                    $.ajax({
+                        type:'GET',
+                        url:'http://127.0.0.1:8000/dvd_list_dbv/',
+                        data:{'page': e.target.id, 'letter':page_letter},
+                        success: function(data) {
+
+                            list_template = template1(data);
+                            dvdList.html(list_template);
+
+                            nav_template = template2(data);
+                            navList.html(nav_template);
+
+
+                            pagination_template = template3(data);
+                            pagination.html(pagination_template);
+
+                        }
+                    })
+                });
+
 
                 $('#nav-list').on('click', '.letter', function(e) {
 
@@ -203,7 +206,7 @@
 
                     $.ajax({
                         type:'GET',
-                        url:'http://127.0.0.1:8000/dvd_list/',
+                        url:'http://127.0.0.1:8000/dvd_list_dbv/',
                         data:{'page': e.target.id},
                         success: function(data) {
 
@@ -219,7 +222,6 @@
                         }
                     })
                 });
-            });
         </script>
     </body>
 </html>
